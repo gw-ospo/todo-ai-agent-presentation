@@ -1,0 +1,414 @@
+---
+pagetitle: "How the GW OSPO Uses AI"
+format:
+  revealjs:
+    theme: [default, gw-theme.scss]
+    width: 1280
+    height: 720
+    margin: 0
+    center: false
+    slide-number: false
+    progress: false
+    controls: true
+    hash: true
+    transition: none
+    mouse-wheel: true
+    embed-resources: true
+    include-in-header:
+      text: |
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
+    include-after-body:
+      text: |
+        <script>
+        // GW brand fonts first, free substitutes second: if Gazzetta is not
+        // installed, switch the display weights and scale to Barlow Condensed.
+        (function () {
+          function detect() {
+            var forced = /[?&]fonts=substitutes/.test(location.search);
+            var ctx = document.createElement('canvas').getContext('2d');
+            var probe = 'mmmmmmmmmmlli';
+            ctx.font = '100px monospace';
+            var mono = ctx.measureText(probe).width;
+            ctx.font = '100px "Gazzetta", monospace';
+            var has = ctx.measureText(probe).width !== mono;
+            document.documentElement.classList.toggle('gw-substitute-fonts', forced || !has);
+          }
+          detect();
+          if (document.fonts && document.fonts.ready) document.fonts.ready.then(detect);
+        })();
+        </script>
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+## How the GW OSPO Uses AI {.dark .cover background-color="#00223E"}
+
+<div class="star-pattern"></div>
+
+<div class="kicker">GW Open Source Program Office</div>
+
+[David Lippert]{.byline}
+
+<div class="ribbon"></div>
+
+::: notes
+~30 min talk + ~15 min questions. Pacing: Overview 3 min, Part 1 7 min, Part 2 8 min, Part 3 5 min, Part 4 6 min, close 1 min.
+:::
+
+<!-- ============ OVERVIEW (3 slides, ~3 min) ============ -->
+
+## GW Open Source Program Office {.content-slide}
+
+<div class="kicker">Overview</div>
+
+::: {.split .wide-left}
+::: {}
+**Based in the Library**, serving all GW students, faculty, staff, and researchers.
+
+**Mission:** foster a culture of open collaboration through open source software, open data, and open access.
+
+[ospo.gwu.edu](https://ospo.gwu.edu/)
+:::
+::: {}
+![](images/ospo-donuts.jpg)
+:::
+:::
+
+## What we do {.content-slide}
+
+<div class="kicker">Overview</div>
+
+::: {.tiles}
+::: {.tile}
+[Educate]{.tile-label}
+
+- What is open source?
+- How do I make research outputs public?
+- Can open source help me get a job?
+:::
+::: {.tile}
+[Connect]{.tile-label}
+
+- Local: Nava, Civic Tech DC, CMS
+- Global: CURIOSS, CHAOSS, Open Forum for AI, United Nations
+:::
+::: {.tile}
+[Support]{.tile-label}
+
+- Consultations
+- Workshops
+- Grant support
+:::
+:::
+
+## Events and students {.content-slide}
+
+<div class="kicker">Overview</div>
+
+::: {.split}
+::: {}
+- GW OSCON, March 31 to April 1, 2027
+- GW Coders Lunch & Learn
+- Hackathons and the Halloween Robot Challenge
+- Student ambassadors and awards
+:::
+::: {}
+![](images/ospo-ambassadors.jpg)
+[2025/2026 GW OSPO Ambassadors]{.caption}
+:::
+:::
+
+::: notes
+Keep this to about 3 minutes total. The rest of the talk is about AI.
+:::
+
+<!-- ============ PART 1: DESIGN SKILL (~7 min) ============ -->
+
+## A design skill and a review process {.dark .divider background-color="#00223E"}
+
+<div class="star-pattern"></div>
+
+<div class="kicker">Part 1</div>
+
+::: {.lead}
+How AI helps us make on-brand materials.
+:::
+
+## From first draft to final {.content-slide}
+
+<div class="kicker">Part 1 · Design skill</div>
+
+::: {.compare}
+::: {}
+![](images/awards-original.jpg)
+[Original]{.caption}
+:::
+::: {.arrow}
+→
+:::
+::: {}
+![](images/awards-final.jpg)
+[Final]{.caption}
+:::
+:::
+
+::: notes
+Student awards graphic. Walk through what changed: hierarchy, palette, spacing. Original made by hand; final made with the design skill and then reviewed.
+:::
+
+## Skill, then review {.content-slide}
+
+<div class="kicker">Part 1 · Design skill</div>
+
+::: {.tiles}
+::: {.tile}
+[1 · Generate]{.tile-label}
+
+A design skill loads our brand: palette, type, and graphic elements.
+:::
+::: {.tile}
+[2 · Review]{.tile-label}
+
+A second skill checks the result against the brand and layout principles.
+:::
+::: {.tile}
+[3 · Human decides]{.tile-label}
+
+A person reads the report, fixes priorities, and approves.
+:::
+:::
+
+::: notes
+Repos: github.com/gw-ospo/gwospo-brand and github.com/gw-ospo/gw-design-review. The newest piece is the gw-presentation skill (github.com/gw-ospo/gw-presentation), which built this deck.
+:::
+
+## What the review checks {.content-slide}
+
+<div class="kicker">Part 1 · Review process</div>
+
+::: {.tiles .cols-4}
+::: {.tile .slim}
+[Proximity]{.tile-label}
+
+Related things sit together.
+:::
+::: {.tile .slim}
+[Alignment]{.tile-label}
+
+Every element lines up with something.
+:::
+::: {.tile .slim}
+[Repetition]{.tile-label}
+
+One visual system, used consistently.
+:::
+::: {.tile .slim}
+[Contrast]{.tile-label}
+
+The main point is obvious.
+:::
+:::
+
+::: notes
+Plus brand rules: GW palette, accessible color pairings, approved fonts, and the OSCON extended palette. Output is a prioritized list of fixes.
+:::
+
+<!-- ============ PART 2: QUARTO (~8 min) ============ -->
+
+## Quarto and AI {.dark .divider background-color="#00223E"}
+
+<div class="star-pattern"></div>
+
+<div class="kicker">Part 2</div>
+
+::: {.lead}
+Ideas from Professor John P. Helveston.
+:::
+
+## Quarto separates [content]{.content} from [format]{.format}. {.big-idea .rule}
+
+::: notes
+Write once in plain text. Choose slides, PDF, web page, or Word later.
+:::
+
+## Same content, four formats {.content-slide}
+
+<div class="kicker">Part 2 · Quarto</div>
+
+::: {.formats}
+::: {}
+[1×]{.mult}
+[Quarto]{.mult-label}
+
+![](images/format-quarto.jpg)
+:::
+::: {}
+[2×]{.mult}
+[PDF (LaTeX)]{.mult-label}
+
+![](images/format-pdf.jpg)
+:::
+::: {}
+[3×]{.mult}
+[HTML]{.mult-label}
+
+![](images/format-html.jpg)
+:::
+::: {}
+[8×]{.mult}
+[Word]{.mult-label}
+
+![](images/format-word.jpg)
+:::
+:::
+
+::: notes
+Characters needed to express the same sentence: Quarto 125, PDF 252, HTML 377, Word 995. Credit Prof. Helveston's slides.
+:::
+
+## Three benefits with AI {.content-slide}
+
+<div class="kicker">Part 2 · Quarto</div>
+
+::: {.tiles}
+::: {.tile}
+[Modularity]{.tile-label}
+
+Content and format live apart, so AI can edit one without breaking the other.
+:::
+::: {.tile}
+[Efficiency]{.tile-label}
+
+Plain text is short. Fewer characters means fewer tokens, lower cost, faster edits.
+:::
+::: {.tile}
+[Correctness]{.tile-label}
+
+Small readable files are easy for people to check and for Git to diff.
+:::
+:::
+
+## This deck is a text file {.content-slide}
+
+<div class="kicker">Part 2 · Quarto</div>
+
+::: {.split}
+::: {}
+**index.qmd** holds the words. **gw-theme.scss** holds the look.
+
+Change the theme and every slide changes. Change a sentence and the design is untouched.
+:::
+::: {.tile}
+[Source]{.tile-label}
+
+[github.com/gw-ospo/todo-ai-agent-presentation](https://github.com/gw-ospo/todo-ai-agent-presentation)
+:::
+:::
+
+<!-- ============ PART 3: OTHER AI WORK (~5 min) ============ -->
+
+## Other AI work {.dark .divider background-color="#00223E"}
+
+<div class="star-pattern"></div>
+
+<div class="kicker">Part 3</div>
+
+::: {.lead}
+Research, policy, and the pop-up AI museum.
+:::
+
+## AI research {.content-slide}
+
+<div class="kicker">Part 3 · Other AI work</div>
+
+::: {.tiles .cols-2}
+::: {.tile}
+[TAI · Trustworthy AI]{.tile-label}
+
+- Openness as a path to trust
+- NSF TRAILS: AI skills and open source literacy
+:::
+::: {.tile}
+[OFAI · Open Forum for AI]{.tile-label}
+
+- CMU, UT Austin, Georgia Tech, Purdue, GW
+- Research, prototypes, policy, community, talent
+:::
+:::
+
+::: notes
+OSPO research also includes the open source literacy game (images/drag-drop-game.png).
+:::
+
+## The pop-up AI museum {.content-slide}
+
+<div class="kicker">Part 3 · Other AI work</div>
+
+::: {.img-row}
+::: {}
+![](images/art-stickers.jpg)
+[digital art student stickers]{.caption}
+:::
+::: {}
+![](images/art-robot-event.jpg)
+[open source art show]{.caption}
+:::
+:::
+
+::: notes
+TODO: replace with pop-up AI museum photos and add 2-3 facts (dates, location, what visitors did).
+:::
+
+<!-- ============ PART 4: ORB + OSPO RADAR (~6 min) ============ -->
+
+# {.dark .divider background-color="#00223E"}
+
+<div class="star-pattern"></div>
+
+<div class="kicker">Part 4</div>
+
+::: {.lead}
+ORB and OSPO Radar.
+:::
+
+## Open Source Discovery & Curation {.content-slide}
+
+<div class="kicker">Part 4 · Discovery</div>
+
+::: {.tiles .cols-2}
+::: {.tile .slim}
+[ORB · Open Source Repository Browser]{.tile-label}
+
+- Built by the UC OSPO Network
+- Maps and classifies open source projects across UC campuses
+- Makes projects easier to find for researchers, students, and collaborators
+- Raises visibility, recognition, and funding potential
+:::
+::: {.tile .slim}
+[OSPO Radar · with Software Heritage]{.tile-label}
+
+- Two-year, Sloan Foundation funded project
+- Institutional portal and software assets dashboard for OSPOs
+- Builds on CodeMeta metadata and Software Heritage archiving
+- Includes an Open Science helpdesk and training
+:::
+:::
+
+::: notes
+ORB: github.com/UC-OSPO-Network/orb-showcase (UC Open Source Repository Browser Showcase). OSPO-RADAR = Open Source Program Office Research Assets Dashboard and Archival Resource. Source: softwareheritage.org/2025/04/02/ospo-radar-project-launch/. Software Heritage is collaborating with CURIOSS and seeking academic OSPOs to join. Add a screenshot of ORB or the Radar dashboard if one is available; the ORB demo site (orb-showcase-seven.vercel.app) returned 404 when checked.
+:::
+
+<!-- ============ CLOSE ============ -->
+
+## Skills, plain text, and open source discovery. {.dark .big-idea .rule background-color="#00223E"}
+
+<div class="star-pattern"></div>
+
+::: {.gloss}
+ospo.gwu.edu · ospo@gwu.edu
+:::
+
+<div class="ribbon"></div>
