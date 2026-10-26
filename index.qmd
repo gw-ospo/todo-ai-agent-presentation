@@ -1,5 +1,5 @@
 ---
-pagetitle: "How the GW OSPO Uses AI"
+pagetitle: "How the GW OSPO Uses Skill.md and AI"
 format:
   revealjs:
     theme: [default, gw-theme.scss]
@@ -44,7 +44,7 @@ execute:
   message: false
 ---
 
-## How the GW OSPO Uses AI {.dark .cover background-color="#00223E"}
+## How the GW OSPO Uses Skill.md and AI {.dark .cover background-color="#00223E"}
 
 <div class="star-pattern"></div>
 
@@ -92,8 +92,8 @@ execute:
 ::: {.tile}
 [Connect]{.tile-label}
 
-- Local: Nava, Civic Tech DC, CMS
-- Global: CURIOSS, CHAOSS, Open Forum for AI, United Nations
+- Open source as the glue to help academia, industry, government, & other orgs work together
+- Network: CURIOSS, CHAOSS, OFAI, UN, Nava, Civic Tech DC, CMS, TODO, ...
 :::
 ::: {.tile}
 [Support]{.tile-label}
@@ -101,16 +101,18 @@ execute:
 - Consultations
 - Workshops
 - Grant support
+- Initiatives
+- Events
 :::
 :::
 
-## Events and students {.content-slide}
+## Events {.content-slide}
 
 <div class="kicker">Overview</div>
 
 ::: {.split}
 ::: {}
-- GW OSCON, March 31 to April 1, 2027
+- [GW OSCON](https://ospo.gwu.edu/open-source-conference-gw-oscon-2027), March 31 to April 1, 2027
 - GW Coders Lunch & Learn
 - Hackathons and the Halloween Robot Challenge
 - Student ambassadors and awards
@@ -167,17 +169,17 @@ Student awards graphic. Walk through what changed: hierarchy, palette, spacing. 
 ::: {.tile}
 [1 · Generate]{.tile-label}
 
-A design skill loads our brand: palette, type, and graphic elements.
+Our internal OSPO Marketing & Comms team creates a flyer, newsletter, website, or other output.
 :::
 ::: {.tile}
 [2 · Review]{.tile-label}
 
-A second skill checks the result against the brand and layout principles.
+The design skill checks the graphic against the brand and layout principles.
 :::
 ::: {.tile}
 [3 · Human decides]{.tile-label}
 
-A person reads the report, fixes priorities, and approves.
+A person reads the report, fixes priorities, iterates, and approves.
 :::
 :::
 
@@ -343,7 +345,7 @@ Research, policy, and the pop-up AI museum.
 OSPO research also includes the open source literacy game (images/drag-drop-game.png).
 :::
 
-## The pop-up AI museum {.content-slide}
+## Open Source, AI, and Art {.content-slide}
 
 <div class="kicker">Part 3 · Other AI work</div>
 
