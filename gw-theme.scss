@@ -407,7 +407,7 @@ html.gw-substitute-fonts {
     border: 1px solid #d1d9e0;
     box-shadow: 0 4px 18px rgba(0, 34, 62, 0.18);
     background: #fff;
-    .embed-frame { width: 100%; height: 100%; }
+    .embed-frame { width: 100%; height: 100%; overflow: hidden; }
     iframe { width: 100%; height: 100%; border: 0; display: block; }
   }
   // Small live site and stickers stacked on the left, the art show photo large on the right.
@@ -429,9 +429,9 @@ html.gw-substitute-fonts {
   }
   // Game frame inside the TAI tile (slide: AI research).
   // TAI slide: the game gets nearly the whole slide.
-  .slides > section.game-slide { padding: 30px 40px 46px; }
+  .slides > section.game-slide { padding: 14px 40px 34px; }
   section.game-slide > h2 { font-size: calc(40px * var(--display-scale)); }
-  section.game-slide > h2::after { margin-top: 8px !important; }
+  section.game-slide > h2::after { margin-top: 6px !important; margin-bottom: 0 !important; }
   section.game-slide .kicker { margin-bottom: 4px; }
   .game-big {
     flex: 1;
@@ -439,7 +439,6 @@ html.gw-substitute-fonts {
     display: flex;
     flex-direction: column;
     .embed-deck { width: 100%; flex: 1; height: auto; min-height: 0; margin: 0; }
-    .caption { margin-top: 2px; font-size: 15px; }
   }
   .contact { font-size: 28px; margin-top: 26px; }
   .contact a { color: #fff; text-decoration: underline; text-decoration-color: var(--c-on-dark); text-underline-offset: 5px; }

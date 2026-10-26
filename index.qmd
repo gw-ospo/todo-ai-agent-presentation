@@ -103,6 +103,19 @@ format:
               f.src = el.getAttribute('data-embed-src');
               f.title = el.getAttribute('data-embed-title') || '';
               f.setAttribute('allowfullscreen', '');
+              // Embedded reveal decks: give the frame the deck's native size and
+              // scale it down, so the deck never has to fit itself into a small
+              // window (which left a white strip on the right and bottom).
+              var native = el.getAttribute('data-embed-native');
+              if (native) {
+                var nw = parseInt(native.split('x')[0], 10), nh = parseInt(native.split('x')[1], 10);
+                f.style.width = nw + 'px';
+                f.style.height = nh + 'px';
+                f.style.maxWidth = 'none';
+                f.style.maxHeight = 'none';
+                f.style.transformOrigin = '0 0';
+                f.style.transform = 'scale(' + (el.offsetWidth / nw) + ')';
+              }
               el.appendChild(f);
               // Sketch-style sites (p5.js) size their canvas to the window once at load,
               // so load them a second time after the slide has settled at its final size.
@@ -242,7 +255,7 @@ How AI helps us make on-brand materials.
 Student awards graphic. Walk through what changed: hierarchy, palette, spacing. Original made by hand; final made with the design skill and then reviewed.
 :::
 
-## Skill, then review {.content-slide}
+## Review process {.content-slide}
 
 <div class="kicker">Part 1 · Design skill</div>
 
@@ -502,7 +515,7 @@ Research from Professor John P. Helveston.
 
 <div class="kicker">Part 2 · Professor John P. Helveston, posit::conf(2026)</div>
 
-<div class="embed-deck"><div class="embed-frame" data-embed-src="https://jhelvy.github.io/2026-posit-conf-quarto/#/8" data-embed-title="Slide 9 of John Helveston's posit::conf 2026 talk"></div></div>
+<div class="embed-deck"><div class="embed-frame" data-embed-native="1600x900" data-embed-src="https://jhelvy.github.io/2026-posit-conf-quarto/#/8" data-embed-title="Slide 9 of John Helveston's posit::conf 2026 talk"></div></div>
 
 ::: notes
 Live embed of slide 9 from Professor Helveston's posit::conf(2026) talk (jhelvy.github.io/2026-posit-conf-quarto/#/8). Needs internet. Click inside the frame to advance its fragments, then use the arrow keys outside it. Write once in plain text; choose slides, PDF, web page, or Word later.
@@ -512,7 +525,7 @@ Live embed of slide 9 from Professor Helveston's posit::conf(2026) talk (jhelvy.
 
 <div class="kicker">Part 2 · Professor John P. Helveston, posit::conf(2026)</div>
 
-<div class="embed-deck"><div class="embed-frame" data-embed-src="https://jhelvy.github.io/2026-posit-conf-quarto/#/9" data-embed-title="Slide 10 of John Helveston's posit::conf 2026 talk"></div></div>
+<div class="embed-deck"><div class="embed-frame" data-embed-native="1600x900" data-embed-src="https://jhelvy.github.io/2026-posit-conf-quarto/#/9" data-embed-title="Slide 10 of John Helveston's posit::conf 2026 talk"></div></div>
 
 ::: notes
 Live embed of slide 10 (jhelvy.github.io/2026-posit-conf-quarto/#/9).
@@ -629,7 +642,6 @@ Research, policy, and the pop-up AI museum.
 
 <div class="game-big">
 <div class="embed-deck"><div class="embed-frame" data-embed-reload data-embed-src="https://gw-ospo.shinyapps.io/os-research-game/" data-embed-title="Open source research game"></div></div>
-<div class="caption">drag each logo to proprietary, open source, or I don't know</div>
 </div>
 
 ::: notes
@@ -668,7 +680,7 @@ TODO: replace with pop-up AI museum photos and add 2-3 facts (dates, location, w
 :::
 
 ::: {.gloss}
-Let's collaborate on research projects and to provide opportunities for students.
+Let's collaborate on research projects and provide opportunities for students together.
 :::
 
 <div class="ribbon"></div>
