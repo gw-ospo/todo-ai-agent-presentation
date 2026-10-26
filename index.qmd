@@ -2,22 +2,24 @@
 pagetitle: "How the GW OSPO Uses Skill.md and AI"
 format:
   revealjs:
-    theme: [default, gw-theme.scss]
+    theme: [default, gw-theme.scss, todo-group-theme.scss]
     width: 1280
     height: 720
     margin: 0
     center: false
-    slide-number: false
+    slide-number: true
+    show-slide-number: all
     progress: false
     controls: true
     hash: true
     transition: none
     mouse-wheel: true
+    footer: "[How the GW OSPO Uses Skill.md and AI](https://gw-ospo.github.io/todo-ai-agent-presentation/) © 2026 by [David Lippert](https://github.com/david-lippert) is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)"
     embed-resources: true
     include-in-header:
       text: |
         <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Oswald:wght@500;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     include-after-body:
       text: |
         <script>
@@ -37,6 +39,85 @@ format:
           detect();
           if (document.fonts && document.fonts.ready) document.fonts.ready.then(detect);
         })();
+        // Embedded talks: load each iframe only when its slide is shown, so a
+        // missing connection never slows the rest of the deck. (Created here,
+        // not in the markdown, so the render step doesn't inline the page.)
+        // Theme switcher: GW and TODO Group logos in each slide header toggle the theme.
+        document.addEventListener('DOMContentLoaded', function () {
+          var root = document.documentElement;
+          var saved = null;
+          try { saved = localStorage.getItem('deck-theme'); } catch (e) {}
+          var m = /[?&]theme=(gw|todo)/.exec(location.search);
+          var current = m ? m[1] : (saved === 'todo' ? 'todo' : 'gw');
+          var sections = document.querySelectorAll('.reveal .slides > section');
+          sections.forEach(function (sec) {
+            var box = document.createElement('div');
+            box.className = 'hdr-logos';
+            [['ospo', 'gw', 'GW Open Source Program Office', 'Switch to the GW theme'],
+             ['todo', 'todo', 'TODO Group', 'Switch to the TODO Group theme']].forEach(function (d) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'hdr-logo ' + d[0];
+              b.setAttribute('data-theme', d[1]);
+              b.setAttribute('aria-label', d[2] + '. ' + d[3]);
+              b.title = d[3] + ' (or press t)';
+              b.addEventListener('click', function (e) { e.stopPropagation(); setTheme(d[1]); b.blur(); });
+              box.appendChild(b);
+            });
+            sec.appendChild(box);
+          });
+          function setTheme(name) {
+            current = name;
+            root.classList.toggle('theme-todo', name === 'todo');
+            document.querySelectorAll('.hdr-logo').forEach(function (b) {
+              b.classList.toggle('active', b.getAttribute('data-theme') === name);
+            });
+            try { localStorage.setItem('deck-theme', name); } catch (e) {}
+            paintDarkBackgrounds();
+          }
+          // Dark slides get their background from a data attribute; point it at the theme color.
+          function paintDarkBackgrounds() {
+            if (!window.Reveal || !Reveal.getSlideBackground) return;
+            sections.forEach(function (sec) {
+              if (!sec.classList.contains('dark')) return;
+              var bg = Reveal.getSlideBackground(sec);
+              if (bg) bg.style.setProperty('background-color', 'var(--c-deep)', 'important');
+            });
+          }
+          function start() {
+            if (!window.Reveal) { setTimeout(start, 100); return; }
+            Reveal.on('ready', function () { setTheme(current); });
+            if (Reveal.isReady && Reveal.isReady()) setTheme(current);
+            document.addEventListener('keydown', function (e) {
+              if (e.key === 't' && !e.metaKey && !e.ctrlKey && !e.altKey) setTheme(current === 'gw' ? 'todo' : 'gw');
+            });
+          }
+          start();
+        });
+        document.addEventListener('DOMContentLoaded', function () {
+          function load(slide) {
+            if (!slide) return;
+            slide.querySelectorAll('.embed-frame[data-embed-src]').forEach(function (el) {
+              if (el.querySelector('iframe')) return;
+              var f = document.createElement('iframe');
+              f.src = el.getAttribute('data-embed-src');
+              f.title = el.getAttribute('data-embed-title') || '';
+              f.setAttribute('allowfullscreen', '');
+              el.appendChild(f);
+              // Sketch-style sites (p5.js) size their canvas to the window once at load,
+              // so load them a second time after the slide has settled at its final size.
+              if (el.hasAttribute('data-embed-reload')) {
+                setTimeout(function () { f.src = el.getAttribute('data-embed-src'); }, 700);
+              }
+            });
+          }
+          function wire() {
+            if (!window.Reveal) { setTimeout(wire, 100); return; }
+            Reveal.on('ready', function (e) { load(e.currentSlide); });
+            Reveal.on('slidechanged', function (e) { load(e.currentSlide); });
+          }
+          wire();
+        });
         </script>
 execute:
   echo: false
@@ -218,6 +299,193 @@ The main point is obvious.
 Plus brand rules: GW palette, accessible color pairings, approved fonts, and the OSCON extended palette. Output is a prioritized list of fixes.
 :::
 
+## How a review is written {.content-slide}
+
+<div class="kicker">Part 1 · Review process</div>
+
+<div class="report-slide">
+<div class="report-steps">
+<div><span class="chip chip-blue">Read</span><span><b>One-line read</b> and what the eye sees first, second, third.</span></div>
+<div><span class="chip chip-good">Start here</span><span><b>What's working.</b> Two or three real strengths, before any criticism.</span></div>
+<div><span class="chip chip-must">Must fix</span><span>Breaks a brand rule or accessibility. Not taste.</span></div>
+<div><span class="chip chip-should">Should fix</span><span>Harder to read than it needs to be.</span></div>
+<div><span class="chip chip-consider">Consider</span><span>A suggestion. Take it or leave it.</span></div>
+<div><span class="chip chip-blue">Next</span><span><b>If you only do three things:</b> a short checklist.</span></div>
+</div>
+<div class="report-img"><img src="images/review-report.png" alt="The top of a design review written in markdown: the one-line read, reading order, what's working, and the first must-fix findings"></div>
+</div>
+
+::: notes
+Show the markdown report (top of the real review of the awards flyer, 2026-09-11). Point out that it opens with what is working: the review is written for students and staff who made the piece themselves. Each finding names where the problem is, which rule it relates to, and the exact fix. Ends with "If you only do three things" and the checks that were run (palette audit, contrast). The reviewer does not redesign the work; it tells you what to change and why, then stops.
+:::
+
+## Review finding 1: an off-brand blue {.content-slide}
+
+<div class="kicker">Part 1 · Review of the original</div>
+
+<div class="flyer-slide">
+<div class="flyer"><img src="images/awards-original.jpg" alt="Original GW OSPO 2026 Open Source Awards flyer"><span class="hl" style="left:0.00%;top:2.81%;width:100.00%;height:18.75%"><b>1</b></span><span class="hl" style="left:0.00%;top:81.56%;width:100.00%;height:14.06%"><b>2</b></span></div>
+<div class="flyer-text">
+<p class="lead-line">A flat blue that isn't in the GW palette runs through the page.</p>
+<ul><li>Measured <b>#0096D5</b>, not Potomac <b>#0075C8</b></li><li>White text on it: <b>3.32:1</b>, large text only</li><li>On Potomac: <b>4.80:1</b>, passes at any size</li><li>Fix: swap both areas to Potomac</li></ul>
+</div>
+</div>
+
+::: notes
+Must fix #1. Highlight 1: stripe accents at the top. Highlight 2: the deadline banner. brand-checks C1 (no off-palette colour). Source: design review of the awards flyer, 2026-09-11.
+:::
+
+## Review finding 2: no Gazzetta {.content-slide}
+
+<div class="kicker">Part 1 · Review of the original</div>
+
+<div class="flyer-slide">
+<div class="flyer"><img src="images/awards-original.jpg" alt="Original GW OSPO 2026 Open Source Awards flyer"><span class="hl" style="left:15.62%;top:24.69%;width:69.92%;height:6.88%"><b>1</b></span><span class="hl" style="left:5.86%;top:50.31%;width:46.48%;height:5.31%"><b>2</b></span><span class="hl" style="left:6.64%;top:67.19%;width:43.36%;height:3.75%"><b>3</b></span><span class="hl" style="left:55.47%;top:67.19%;width:40.23%;height:3.75%"><b>4</b></span><span class="hl" style="left:38.67%;top:84.38%;width:45.70%;height:9.69%"><b>5</b></span></div>
+<div class="flyer-text">
+<p class="lead-line">Every headline is set in a serif face. Gazzetta appears nowhere.</p>
+<ul><li>Five headline moments, one serif face</li><li>Source Serif should stay rare: one word or a pull quote</li><li>Fix: reset all five in Gazzetta</li><li>No Gazzetta? Use Avenir Next Bold, not the serif</li></ul>
+</div>
+</div>
+
+::: notes
+Must fix #2. brand-checks T2 (Gazzetta carries headlines) and T5 (Source Serif stays rare). Highlights: title, prize amount, the two award headers, the deadline.
+:::
+
+## Review finding 3: hierarchy {.content-slide}
+
+<div class="kicker">Part 1 · Review of the original</div>
+
+<div class="flyer-slide">
+<div class="flyer"><img src="images/awards-original.jpg" alt="Original GW OSPO 2026 Open Source Awards flyer"><span class="hl" style="left:14.84%;top:24.69%;width:71.88%;height:20.00%"><b>1</b></span><span class="hl" style="left:0.00%;top:48.12%;width:100.00%;height:15.62%"><b>2</b></span><span class="hl" style="left:0.00%;top:81.56%;width:100.00%;height:14.06%"><b>3</b></span></div>
+<div class="flyer-text">
+<p class="lead-line">The loudest shape is the prize amount. The deadline is last.</p>
+<ul><li>Reading order: prize banner, photo, title, and only then the deadline</li><li>The hero block is centered; the rest is left-aligned</li><li>Fix: left-align the hero and give the deadline more weight</li><li>Or quiet the cream prize banner</li></ul>
+</div>
+</div>
+
+::: notes
+Should fix #3 (alignment) and #4 (contrast). Highlight 1: centered hero block. Highlight 2: cream prize banner, the highest-contrast shape. Highlight 3: the deadline banner, the actual call to action. The one job of this piece is to get students to apply by November 1.
+:::
+
+## From first draft to final {.content-slide background-color="#EEEEEE"}
+
+<div class="kicker">Part 1 · Design skill</div>
+
+::: {.compare}
+::: {}
+![](images/awards-original.jpg)
+[Original]{.caption}
+:::
+::: {.arrow}
+→
+:::
+::: {}
+![](images/awards-final.jpg)
+[Final]{.caption}
+:::
+:::
+
+::: notes
+Back to the before and after, now that we have seen what the review found. Walk through what changed: the on-palette blue, the headline type, the left alignment, and the deadline carrying more weight.
+:::
+
+## Inside the design review repo {.content-slide}
+
+<div class="kicker">Part 1 · The skill</div>
+
+<div class="tiles tiles-4">
+<div class="tile slim">
+<span class="tile-label">SKILL.md</span>
+The instructions Claude follows: how to look at a design and how to write the report.
+</div>
+<div class="tile slim">
+<span class="tile-label">brand/</span>
+<code>DESIGN.md</code> is the rulebook, <code>palette.json</code> the colors, <code>profile.md</code> who the reviews are for.
+</div>
+<div class="tile slim">
+<span class="tile-label">references/</span>
+<code>brand-checks.md</code>, <code>design-principles.md</code>, and <code>report-format.md</code>: what to check and how to write it.
+</div>
+<div class="tile slim">
+<span class="tile-label">scripts/</span>
+<code>contrast.py</code> and <code>palette_audit.py</code> measure; <code>rasterize.py</code> turns PDFs into images.
+</div>
+</div>
+
+<p class="foot-note">Lives in <code>.claude/skills/gw-design-review/</code>. A ready-made <code>gw-design-review.zip</code> is included for claude.ai.</p>
+
+::: notes
+Repo: github.com/gw-ospo/gw-design-review. The skill follows the open Agent Skills format, so it is portable across tools; the only thing that differs is which folder each tool looks in. Brand rules live in one place (brand/DESIGN.md) so updating the rulebook updates the reviewer. The scripts give real measurements, so colors and contrast are checked, not guessed.
+:::
+
+## Using a skill with Claude {.content-slide}
+
+<div class="kicker">Part 1 · The skill</div>
+
+<div class="tiles tiles-3">
+<div class="tile slim">
+<span class="tile-label">claude.ai</span>
+<ol>
+<li>Download <code>gw-design-review.zip</code></li>
+<li>Settings, then Capabilities, then Skills</li>
+<li>Upload skill (don't unzip)</li>
+</ol>
+</div>
+<div class="tile slim">
+<span class="tile-label">Claude desktop, Cowork, Code</span>
+<ol>
+<li>Download the repo (Code, then Download ZIP)</li>
+<li>Point Claude at the folder</li>
+<li>Nothing to install</li>
+</ol>
+</div>
+<div class="tile slim">
+<span class="tile-label">Any other AI tool</span>
+<ol>
+<li>Attach the four text files</li>
+<li>Ask for the report</li>
+<li>No setup, no auto contrast checks</li>
+</ol>
+</div>
+</div>
+
+<p class="foot-note"><b>Then ask:</b> "Review this poster against our brand guidelines. It's a printed 11×17 for the OSCON call for papers."</p>
+
+::: notes
+Have three answers ready: what it is and where it will end up, who it is for and what they should do next, and whether it is OSCON or general OSPO (OSCON has three extra accent colors). Claude Code: git clone the repo, cd in, run claude; or symlink the skill into ~/.claude/skills to use it in any folder. Do not upload the GitHub repo zip to claude.ai; use the ready-made gw-design-review.zip. ChatGPT/Codex reads .agents/skills, so copy the folder there. Ask early, not at the end; it will not redesign your work; if it is wrong, say so and ask it to look again.
+:::
+
+## Where to find the skills {.content-slide}
+
+<div class="kicker">Part 1 · The repos</div>
+
+<div class="tiles tiles-3">
+<div class="tile slim">
+<span class="tile-label">gwospo-brand</span>
+Brand assets and the design system for the GW OSPO, including the OSCON palette and patterns.
+
+[github.com/gw-ospo/gwospo-brand](https://github.com/gw-ospo/gwospo-brand)
+</div>
+<div class="tile slim">
+<span class="tile-label">gw-design-review</span>
+The design reviewer. Checks a flyer, poster, deck, or page against the brand and the four principles.
+
+[github.com/gw-ospo/gw-design-review](https://github.com/gw-ospo/gw-design-review)
+</div>
+<div class="tile slim">
+<span class="tile-label">gw-presentation</span>
+Builds GW-branded slides. The newest piece, and it helped build this deck.
+
+[github.com/gw-ospo/gw-presentation](https://github.com/gw-ospo/gw-presentation)
+</div>
+</div>
+
+<div class="credit"><img src="images/lorena-barba.png" alt="Professor Lorena Barba"><span>All three skills created by <b>Professor Lorena Barba</b></span></div>
+
+::: notes
+Photo of Lorena Barba: Lorena Barba, CC BY 3.0, via Wikimedia Commons. The workflow: the brand repo defines the standard, the design review skill checks work against it, and the presentation skill produces on-brand slides to begin with. All three are open source from the gw-ospo GitHub organization.
+:::
+
 <!-- ============ PART 2: QUARTO (~8 min) ============ -->
 
 ## Quarto and AI {.dark .divider background-color="#00223E"}
@@ -227,16 +495,30 @@ Plus brand rules: GW palette, accessible color pairings, approved fonts, and the
 <div class="kicker">Part 2</div>
 
 ::: {.lead}
-Ideas from Professor John P. Helveston.
+Research from Professor John P. Helveston.
 :::
 
-## Quarto separates [content]{.content} from [format]{.format}. {.big-idea .rule}
+## Quarto disentangles content and format {.content-slide}
+
+<div class="kicker">Part 2 · Professor John P. Helveston, posit::conf(2026)</div>
+
+<div class="embed-deck"><div class="embed-frame" data-embed-src="https://jhelvy.github.io/2026-posit-conf-quarto/#/8" data-embed-title="Slide 9 of John Helveston's posit::conf 2026 talk"></div></div>
 
 ::: notes
-Write once in plain text. Choose slides, PDF, web page, or Word later.
+Live embed of slide 9 from Professor Helveston's posit::conf(2026) talk (jhelvy.github.io/2026-posit-conf-quarto/#/8). Needs internet. Click inside the frame to advance its fragments, then use the arrow keys outside it. Write once in plain text; choose slides, PDF, web page, or Word later.
 :::
 
-## Same content, four formats {.content-slide}
+## Quarto disentangles content and format, continued {.content-slide}
+
+<div class="kicker">Part 2 · Professor John P. Helveston, posit::conf(2026)</div>
+
+<div class="embed-deck"><div class="embed-frame" data-embed-src="https://jhelvy.github.io/2026-posit-conf-quarto/#/9" data-embed-title="Slide 10 of John Helveston's posit::conf 2026 talk"></div></div>
+
+::: notes
+Live embed of slide 10 (jhelvy.github.io/2026-posit-conf-quarto/#/9).
+:::
+
+## Same content, four formats - output tokens {.content-slide}
 
 <div class="kicker">Part 2 · Quarto</div>
 
@@ -248,19 +530,19 @@ Write once in plain text. Choose slides, PDF, web page, or Word later.
 ![](images/format-quarto.jpg)
 :::
 ::: {}
-[2×]{.mult}
+[1.8×]{.mult}
 [PDF (LaTeX)]{.mult-label}
 
 ![](images/format-pdf.jpg)
 :::
 ::: {}
-[3×]{.mult}
+[4×]{.mult}
 [HTML]{.mult-label}
 
 ![](images/format-html.jpg)
 :::
 ::: {}
-[8×]{.mult}
+[7.2×]{.mult}
 [Word]{.mult-label}
 
 ![](images/format-word.jpg)
@@ -268,7 +550,7 @@ Write once in plain text. Choose slides, PDF, web page, or Word later.
 :::
 
 ::: notes
-Characters needed to express the same sentence: Quarto 125, PDF 252, HTML 377, Word 995. Credit Prof. Helveston's slides.
+Characters needed to express the same sentence: Quarto 125, PDF 252, HTML 377, Word 663. Credit Prof. Helveston's slides.
 :::
 
 ## Three benefits with AI {.content-slide}
@@ -293,7 +575,7 @@ Small readable files are easy for people to check and for Git to diff.
 :::
 :::
 
-## This deck is a text file {.content-slide}
+## This deck is a quarto markdown file {.content-slide}
 
 <div class="kicker">Part 2 · Quarto</div>
 
@@ -341,76 +623,99 @@ Research, policy, and the pop-up AI museum.
 :::
 :::
 
+## Open source research game {.content-slide .game-slide}
+
+<div class="kicker">Part 3 · TAI</div>
+
+<div class="game-big">
+<div class="embed-deck"><div class="embed-frame" data-embed-reload data-embed-src="https://gw-ospo.shinyapps.io/os-research-game/" data-embed-title="Open source research game"></div></div>
+<div class="caption">drag each logo to proprietary, open source, or I don't know</div>
+</div>
+
 ::: notes
-OSPO research also includes the open source literacy game (images/drag-drop-game.png).
+The frame runs the open source research game live (gw-ospo.shinyapps.io/os-research-game). Needs internet; shinyapps.io may take a few seconds to wake up, so open this slide early. Click inside the frame to play; use the arrow keys outside it to move on.
 :::
 
 ## Open Source, AI, and Art {.content-slide}
 
 <div class="kicker">Part 3 · Other AI work</div>
 
-::: {.img-row}
-::: {}
-![](images/art-stickers.jpg)
-[digital art student stickers]{.caption}
-:::
-::: {}
-![](images/art-robot-event.jpg)
-[open source art show]{.caption}
-:::
-:::
+<div class="art-slide">
+<div class="art-side">
+<figure class="art-embed">
+<div class="embed-deck"><div class="embed-frame" data-embed-reload data-embed-src="https://gw-ospo.github.io/open-source-workshop/" data-embed-title="GW OSPO open source workshop site"></div></div>
+<figcaption class="caption">good first contributions</figcaption>
+</figure>
+<figure><img src="images/art-stickers.jpg" alt="Digital art student stickers"><figcaption class="caption">digital art student stickers</figcaption></figure>
+</div>
+<figure class="art-main"><img src="images/art-robot-event.jpg" alt="Open source art show"><figcaption class="caption">open source art show</figcaption></figure>
+</div>
 
 ::: notes
-TODO: replace with pop-up AI museum photos and add 2-3 facts (dates, location, what visitors did).
+TODO: replace with pop-up AI museum photos and add 2-3 facts (dates, location, what visitors did). The embedded site is gw-ospo.github.io/open-source-workshop (live, needs internet); caption: good first contributions.
 :::
 
 <!-- ============ PART 4: ORB + OSPO RADAR (~6 min) ============ -->
 
-# {.dark .divider background-color="#00223E"}
+## Thank you {.dark .big-idea .rule background-color="#00223E"}
 
 <div class="star-pattern"></div>
 
-<div class="kicker">Part 4</div>
+<div class="kicker">Questions?</div>
+
+::: {.contact}
+<a href="https://ospo.gwu.edu/">ospo.gwu.edu</a> · <a href="mailto:ospo@gwu.edu">ospo@gwu.edu</a> · <a href="https://github.com/gw-ospo">github.com/gw-ospo</a>
+:::
+
+::: {.gloss}
+Let's collaborate on research projects and to provide opportunities for students.
+:::
+
+<div class="ribbon"></div>
+
+::: notes
+About 15 minutes for questions. Backup slides follow: open source discovery and curation (ORB and OSPO Radar).
+:::
+
+<!-- ============ BACKUP ============ -->
+
+## Backup {.dark .divider background-color="#00223E"}
+
+<div class="star-pattern"></div>
+
+<div class="kicker">Backup slides</div>
 
 ::: {.lead}
-ORB and OSPO Radar.
+Open source discovery and curation.
 :::
 
 ## Open Source Discovery & Curation {.content-slide}
 
-<div class="kicker">Part 4 · Discovery</div>
+<div class="kicker">Backup · Discovery</div>
 
 ::: {.tiles .cols-2}
-::: {.tile .slim}
+::: {.tile .slim .compact}
 [ORB · Open Source Repository Browser]{.tile-label}
 
 - Built by the UC OSPO Network
 - Maps and classifies open source projects across UC campuses
 - Makes projects easier to find for researchers, students, and collaborators
 - Raises visibility, recognition, and funding potential
+
+[ORB on GitHub](https://github.com/UC-OSPO-Network/orb-showcase)
 :::
-::: {.tile .slim}
+::: {.tile .slim .compact}
 [OSPO Radar · with Software Heritage]{.tile-label}
 
 - Two-year, Sloan Foundation funded project
 - Institutional portal and software assets dashboard for OSPOs
 - Builds on CodeMeta metadata and Software Heritage archiving
 - Includes an Open Science helpdesk and training
+
+[OSPO-RADAR launch post](https://www.softwareheritage.org/2025/04/02/ospo-radar-project-launch/)
 :::
 :::
 
 ::: notes
 ORB: github.com/UC-OSPO-Network/orb-showcase (UC Open Source Repository Browser Showcase). OSPO-RADAR = Open Source Program Office Research Assets Dashboard and Archival Resource. Source: softwareheritage.org/2025/04/02/ospo-radar-project-launch/. Software Heritage is collaborating with CURIOSS and seeking academic OSPOs to join. Add a screenshot of ORB or the Radar dashboard if one is available; the ORB demo site (orb-showcase-seven.vercel.app) returned 404 when checked.
 :::
-
-<!-- ============ CLOSE ============ -->
-
-## Skills, plain text, and open source discovery. {.dark .big-idea .rule background-color="#00223E"}
-
-<div class="star-pattern"></div>
-
-::: {.gloss}
-ospo.gwu.edu · ospo@gwu.edu
-:::
-
-<div class="ribbon"></div>

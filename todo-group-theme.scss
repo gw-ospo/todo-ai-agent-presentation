@@ -1,0 +1,45 @@
+/*-- scss:rules --*/
+
+// TODO Group theme (https://todogroup.org/).
+//
+// Layers on top of gw-theme.scss: the GW theme defines the layout and reads its
+// colors, fonts, and decorative patterns from CSS custom properties; this file
+// supplies the TODO Group values, scoped to `html.theme-todo`. The header logos
+// (or the "t" key) toggle that class, switching the whole deck at runtime.
+//
+// Palette and type are taken from todogroup.org:
+//   logo green #a1d33c, teal #03856f / #016554, deep green #003c32 / #10291e,
+//   Oswald (condensed headlines) and Nunito (body).
+
+html.theme-todo.theme-todo {
+  --c-ink: #003c32;            // headlines, dark UI
+  --c-deep: #10291e;           // dark slide background
+  --c-accent: #a1d33c;         // rules, tile borders (TODO logo green)
+  --c-on-dark: #a1d33c;        // kickers and links on dark slides
+  --c-bright: #03856f;         // kickers and links on light slides
+  --c-tint: #eef4e8;           // tile and panel fill
+  --c-tint-2: #dbe8cf;
+  --c-text: #1d2a24;
+  --c-caption: #5b6b63;
+
+  --font-display: "Oswald", "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-display-italic: "Oswald", "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: "Nunito", "Nunito Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-accent: "Nunito", "Nunito Sans", Georgia, sans-serif;
+  --display-weight: 600;
+  --display-strong: 700;
+  --display-scale: 0.92;       // Oswald sets wider than Gazzetta
+
+  // The GW six-pointed star pattern becomes slashes, echoing the "//" in the TODO mark.
+  --pattern-img: repeating-linear-gradient(115deg,
+      transparent 0 44px, rgba(161, 211, 60, 0.13) 44px 56px,
+      transparent 56px 68px, rgba(161, 211, 60, 0.13) 68px 80px);
+  --ribbon-img: none;
+  --ribbon-color: #a1d33c;     // solid bar in place of the GW chevron ribbon
+}
+
+html.theme-todo .reveal .star-pattern { background-size: auto; }
+html.theme-todo .reveal section.divider h2 { font-style: normal; }
+html.theme-todo .reveal .lead { font-style: normal; }
+html.theme-todo .reveal .gloss { font-style: normal; }
+html.theme-todo .reveal .ribbon { height: 10px; }
